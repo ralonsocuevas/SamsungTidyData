@@ -1,5 +1,25 @@
 # Code Book
-This file contains the summary of the data worked with and the transformations performed
+This file contains the summary of the data worked with and the transformations performed and how they interact
+
+##Tranformations
+
+In this project we perform the following five tranformations to the data: 
+1. Merge the datasets and put the features names in the columns 
+2. Extract only the columns that contains mean or std in the header, also the subject and the activity id 
+3. Change the activities id's by the names 
+4. Change the name of the variables with the information of the features_info file 
+5. Create an independent dataset with the average of each variable for each activity and subject
+
+To run this transformations you need to execute the run_analysis.R script.
+
+##Variables
+data: the raw data combined
+features2: Names of the variables of the raw data
+data_act_names: The merged data with the names of the activities
+x: The x data merged
+y: The y data merged
+subject: The subject data merged
+
 
 ##Raw data
 The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. 
@@ -24,12 +44,3 @@ was obtained by calculating variables from the time and frequency domain.
 - Its activity label. 
 - An identifier of the subject who carried out the experiment.
 
-##Transformations
-In this project we perform the following five tranformations to the data:
-1. Merge the datasets and put the features names in the columns
-2. Extract only the columns that contains mean or std in the header, also the subject and the activity id
-3. Change the activities id's by the names
-4. Change the name of the variables with the information of the features_info file
-5. Create an independent dataset with the average of each variable for each activity and subject
-
-All this transformations are performed in the run_analysis.R script.
