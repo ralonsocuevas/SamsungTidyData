@@ -31,8 +31,7 @@ features <- read.csv(file.path(getwd(),'features.txt'), header = FALSE, sep = ' 
 features2 <- as.character(features[,2])
 names(data)<-c(c('Subject','Activity'),features2)
 
-#2. Extract only the columns that contains mean or std in the header, also
-# the subject and the activity id
+#2. Extract only the columns that contains mean or std in the header, also the subject and the activity id 
 mean_std <- data[,grepl("mean\\(\\)|std\\(\\)|Subject|Activity", names(data))]
 
 #3. Change the activities id's by the names
@@ -56,6 +55,6 @@ features_fix<-gsub("-","_",features_fix)
 names(data_act_names)<-c('Subject','Activity_Name',features_fix)
 
 #5. Create an independent dataset with the average of each variable for each activity and subject
-dataMeansGroupedBy <- aggregate(data_act_names[,3:563], by= list(Activity_Name= data_act_names$Activity_Name, Subject = data_act_names$Subject),FUN = mean)
+dataMeansGroupedBy <- aggregate(data_act_names[,3:563], by= list(Activity_Name= data_act_names$Activity_Name, Subject =data_act_names$Subject),FUN = mean)
 write.table(dataMeansGroupedBy,"tidy_dataset.txt",row.names = FALSE)
 
