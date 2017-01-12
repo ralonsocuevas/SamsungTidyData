@@ -1,22 +1,61 @@
-# SamsungTidyData
-This repo contains the project related to cleaning the Samsung accelerometers data set.
-
 #Getting and Cleaning Data Course Project
 
-The purpose of this project is to demonstrate your ability to collect, work with, and clean a data set. The goal is to prepare tidy data that can be used for later analysis. You will be graded by your peers on a series of yes/no questions related to the project. You will be required to submit: 1) a tidy data set as described below, 2) a link to a Github repository with your script for performing the analysis, and 3) a code book that describes the variables, the data, and any transformations or work that you performed to clean up the data called CodeBook.md. You should also include a README.md in the repo with your scripts. This repo explains how all of the scripts work and how they are connected.
+##Description of the work
 
-One of the most exciting areas in all of data science right now is wearable computing - see for example this article . Companies like Fitbit, Nike, and Jawbone Up are racing to develop the most advanced algorithms to attract new users. The data linked to from the course website represent data collected from the accelerometers from the Samsung Galaxy S smartphone. A full description is available at the site where the data was obtained:
+run_analysis.R: The script that does the transformation
+COdeBook.md: Contains the variables names and experiment explanation
+Readme.md: Description of the work
 
-http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
+###Explanation of the R code:
 
-####Here are the data for the project:
+#1. First of all we merge the datasets and put the features names in the columns
+testpath<-file.path(getwd(),"test")
+trainpath<-file.path(getwd(),"train")
 
-https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
 
-####You should create one R script called run_analysis.R that does the following.
+subject_test<- read.table(file.path(testpath,"subject_test.txt"))
+x_test<- read.table(file.path(testpath,"X_test.txt"))
+y_test<- read.table(file.path(testpath,"y_test.txt"))
 
-Merges the training and the test sets to create one data set.
-Extracts only the measurements on the mean and standard deviation for each measurement.
-Uses descriptive activity names to name the activities in the data set
-Appropriately labels the data set with descriptive variable names.
-From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+subject_train<- read.table(file.path(trainpath,"subject_train.txt"))
+x_train<- read.table(file.path(trainpath,"X_train.txt"))
+y_train<- read.table(file.path(trainpath,"y_train.txt"))
+
+x<-rbind(x_test,x_train)
+y<-rbind(y_test,y_train)
+subject<-rbind(subject_test,subject_train)
+
+data<-cbind(subject,y,x)
+
+features <- read.csv(file.path(getwd(),'features.txt'), header = FALSE, sep = ' ')
+features2 <- as.character(features[,2])
+names(data)<-c(c('Subject','Activity'),features2)
+
+#2. Extract only the columns that contains mean or std in the header, also
+# the subject and the activity id
+mean_std <- data[,grepl("mean\\(\\)|std\\(\\)|Subject|Activity", names(data))]
+
+#3. Change the activities id's by the names
+activities <- read.csv(file.path(getwd(),'activity_labels.txt'), header = FALSE, sep = ' ')
+names(activities)<-c('Activity','Activity_Name')
+data_act_names<-merge(data,activities,by.x = 'Activity',by.y='Activity',all=TRUE)
+data_act_names<-data_act_names[,c('Subject','Activity_Name',features2)]
+
+#4. Change the name of the variables with the information of the features_info file
+features_fix<-features2
+features_fix<-gsub("[(][)]","",features_fix)
+features_fix<-gsub("^t","Time_",features_fix)
+features_fix<-gsub("^f","Frequency_",features_fix)
+features_fix<-gsub("Acc","Accelerometer",features_fix)
+features_fix<-gsub("Gyro","Gyroscope",features_fix)
+features_fix<-gsub("Mag","Magnitude",features_fix)
+features_fix<-gsub("-mean-","_Mean_",features_fix)
+features_fix<-gsub("-std-","_StandardDeviation_",features_fix)
+features_fix<-gsub("-","_",features_fix)
+
+names(data_act_names)<-c('Subject','Activity_Name',features_fix)
+
+#5. Create an independent dataset with the average of each variable for each activity and subject
+dataMeansGroupedBy <- aggregate(data_act_names[,3:563], by= list(Activity_Name= data_act_names$Activity_Name, Subject = data_act_names$Subject),FUN = mean)
+write.table(dataMeansGroupedBy,"tidy_dataset.txt",row.names = FALSE)
+
