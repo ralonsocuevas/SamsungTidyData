@@ -23,3 +23,13 @@ was obtained by calculating variables from the time and frequency domain.
 - A 561-feature vector with time and frequency domain variables. 
 - Its activity label. 
 - An identifier of the subject who carried out the experiment.
+
+##Transformations
+In this project we perform the following five tranformations to the data:
+1. Merge the datasets and put the features names in the columns
+2. Extract only the columns that contains mean or std in the header, also the subject and the activity id
+3. Change the activities id's by the names
+4. Change the name of the variables with the information of the features_info file
+5. Create an independent dataset with the average of each variable for each activity and subject
+
+All this transformations are performed in the run_analysis.R script.
